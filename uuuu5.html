@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Таймер для графини</title>
+
+  <style>
+    :root {
+      --pink: #f49ab7;
+      --pink-dark: #c95f84;
+      --purple: #b99ad9;
+      --purple-dark: #80619e;
+      --mint: #a9dfcf;
+      --yellow: #ffd875;
+      --text: #4d3040;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 10% 15%, #ffffff 0 7px, transparent 8px),
+        radial-gradient(circle at 87% 20%, #ffffff 0 5px, transparent 6px),
+        radial-gradient(circle at 75% 80%, #f9cbd9 0 9px, transparent 10px),
+        linear-gradient(135deg, #fbd4df, #eadcf5 52%, #ccefe4);
+      font-family: Arial, sans-serif;
+      color: var(--text);
+    }
+
+    .app {
+      width: min(100%, 780px);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      color: var(--pink-dark);
+      font-size: clamp(32px, 7vw, 62px);
+      line-height: 1;
+      text-shadow: 3px 3px 0 #ffffff;
+    }
+
+    .subtitle {
+      margin: 0 auto 30px;
+      color: var(--purple-dark);
+      font-size: clamp(17px, 3vw, 23px);
+      font-weight: bold;
+      line-height: 1.35;
+    }
+
+    .timer-panel {
+      width: min(100%, 640px);
+      margin: 0 auto;
+      padding: 22px;
+      border: 4px solid var(--pink-dark);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.93);
+      box-shadow: 0 10px 0 rgba(128, 97, 158, 0.18);
+    }
+
+    .time {
+      margin: 0 0 14px;
+      color: var(--purple-dark);
+      font-size: clamp(48px, 13vw, 90px);
+      font-weight: 900;
+      letter-spacing: 3px;
+      line-height: 1;
+    }
+
+    .status {
+      min-height: 25px;
+      margin-bottom: 17px;
+      color: var(--pink-dark);
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .settings {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 140px;
+      padding: 11px 12px;
+      border: 3px solid var(--purple-dark);
+      border-radius: 13px;
+      background: #fff8f0;
+      color: var(--text);
+      font: inherit;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    button {
+      min-height: 48px;
+      padding: 10px 17px;
+      border: 3px solid var(--purple-dark);
+      border-radius: 13px;
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 900;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+
+    button:hover {
+      filter: brightness(0.96);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 4px solid #6dace5;
+      outline-offset: 2px;
+    }
+
+    .settings button {
+      background: var(--yellow);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .start {
+      background: var(--mint);
+    }
+
+    .pause {
+      background: #ffe7a1;
+    }
+
+    .reset {
+      background: #ffc0c9;
+    }
+
+    .sound {
+      background: #d9c4f1;
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 14px;
+      }
+
+      .timer-panel {
+        padding: 16px;
+      }
+
+      .settings {
+        align-items: stretch;
+      }
+
+      label,
+      input,
+      .settings button {
+        width: 100%;
+      }
+
+      .controls button {
+        flex: 1 1 40%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      button {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <h1>Таймер для графини</h1>
+
+    <p class="subtitle">
+      Ты лучшая и самая замечательная! У тебя всё получится!
+    </p>
+
+    <section class="timer-panel">
+      <div id="time" class="time">10:00</div>
+
+      <div id="status" class="status">
+        Таймер готов. Интервал: 10 минут
+      </div>
+
+      <div class="settings">
+        <label for="minutes">
+          Интервал в минутах
+          <input
+            id="minutes"
+            type="number"
+            min="1"
+            max="1440"
+            step="1"
+            value="10"
+          >
+        </label>
+
+        <button id="setTimer" type="button">
+          Установить
+        </button>
+      </div>
+
+      <div class="controls">
+        <button id="start" class="start" type="button">
+          ▶ Запустить
+        </button>
+
+        <button id="pause" class="pause" type="button">
+          Ⅱ Пауза
+        </button>
+
+        <button id="reset" class="reset" type="button">
+          ↻ Сбросить
+        </button>
+
+        <button id="testSound" class="sound" type="button">
+          ♫ Проверить звук
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const timeElement = document.getElementById("time");
+    const statusElement = document.getElementById("status");
+    const minutesInput = document.getElementById("minutes");
+
+    const setTimerButton = document.getElementById("setTimer");
+    const startButton = document.getElementById("start");
+    const pauseButton = document.getElementById("pause");
+    const resetButton = document.getElementById("reset");
+    const testSoundButton = document.getElementById("testSound");
+
+    let intervalMinutes = 10;
+    let remainingSeconds = intervalMinutes * 60;
+    let timerId = null;
+    let audioContext = null;
+
+    function formatTime(totalSeconds) {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      return String(minutes).padStart(2, "0") + ":" +
+             String(seconds).padStart(2, "0");
+    }
+
+    function updateDisplay() {
+      timeElement.textContent = formatTime(remainingSeconds);
+    }
+
+    function getAudioContext() {
+      if (!audioContext) {
+        audioContext = new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+      }
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume();
+      }
+
+      return audioContext;
+    }
+
+    function playSound() {
+      const context = getAudioContext();
+      const now = context.currentTime;
+
+      // Си - Ля - Си - Ми - До# - Си - До# - Фа# - Ре - До#
+      const melody = [
+        { note: 493.88, start: 0.00, duration: 0.35 },
+        { note: 440.00, start: 0.35, duration: 0.35 },
+        { note: 493.88, start: 0.70, duration: 0.35 },
+        { note: 659.25, start: 1.05, duration: 0.45 },
+        { note: 554.37, start: 1.50, duration: 0.35 },
+        { note: 493.88, start: 1.85, duration: 0.35 },
+        { note: 554.37, start: 2.20, duration: 0.35 },
+        { note: 369.99, start: 2.55, duration: 0.45 },
+        { note: 587.33, start: 3.00, duration: 0.35 },
+        { note: 554.37, start: 3.35, duration: 0.75 }
+      ];
+
+      melody.forEach(function (sound) {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.setValueAtTime(
+          sound.note,
+          now + sound.start
+        );
+
+        gain.gain.setValueAtTime(
+          0.0001,
+          now + sound.start
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.28,
+          now + sound.start + 0.04
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          now + sound.start + sound.duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+
+        oscillator.start(now + sound.start);
+        oscillator.stop(
+          now + sound.start + sound.duration + 0.05
+        );
+      });
+    }
+
+    function startTimer() {
+      if (timerId !== null) {
+        return;
+      }
+
+      getAudioContext();
+
+      statusElement.textContent =
+        "Таймер работает. Следующий сигнал через " +
+        intervalMinutes +
+        " минут";
+
+      timerId = setInterval(function () {
+        remainingSeconds -= 1;
+        updateDisplay();
+
+        if (remainingSeconds <= 0) {
+          playSound();
+
+          statusElement.textContent =
+            "Время вышло! Таймер запущен заново.";
+
+          remainingSeconds = intervalMinutes * 60;
+          updateDisplay();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId === null) {
+        return;
+      }
+
+      clearInterval(timerId);
+      timerId = null;
+
+      statusElement.textContent =
+        "Таймер поставлен на паузу";
+    }
+
+    function resetTimer() {
+      pauseTimer();
+
+      remainingSeconds = intervalMinutes * 60;
+      updateDisplay();
+
+      statusElement.textContent =
+        "Таймер сброшен. Интервал: " +
+        intervalMinutes +
+        " минут";
+    }
+
+    function setTimer() {
+      const enteredMinutes = Number(minutesInput.value);
+
+      if (!Number.isFinite(enteredMinutes) || enteredMinutes < 1) {
+        statusElement.textContent =
+          "Введите число минут не меньше 1";
+
+        minutesInput.focus();
+        return;
+      }
+
+      intervalMinutes = Math.min(
+        Math.floor(enteredMinutes),
+        1440
+      );
+
+      minutesInput.value = intervalMinutes;
+
+      resetTimer();
+    }
+
+    setTimerButton.addEventListener("click", setTimer);
+    startButton.addEventListener("click", startTimer);
+    pauseButton.addEventListener("click", pauseTimer);
+    resetButton.addEventListener("click", resetTimer);
+
+    testSoundButton.addEventListener("click", function () {
+      playSound();
+      statusElement.textContent =
+        "Мелодия проверена";
+    });
+
+    minutesInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        setTimer();
+      }
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>
