@@ -48,7 +48,7 @@
     }
 
     h1 {
-      margin: 0 0 18px;
+      margin: 0 0 10px;
       color: var(--pink-dark);
       font-size: clamp(32px, 7vw, 62px);
       line-height: 1;
@@ -56,11 +56,108 @@
     }
 
     .subtitle {
-      margin: 0 auto 30px;
+      margin: 0 0 20px;
       color: var(--purple-dark);
-      font-size: clamp(17px, 3vw, 23px);
+      font-size: clamp(15px, 3vw, 20px);
       font-weight: bold;
-      line-height: 1.35;
+    }
+
+    .sweet-scene {
+      position: relative;
+      width: min(100%, 700px);
+      height: 330px;
+      margin: 0 auto;
+    }
+
+    .sprinkle {
+      position: absolute;
+      width: 13px;
+      height: 38px;
+      border-radius: 20px;
+      transform: rotate(35deg);
+    }
+
+    .sprinkle.one {
+      top: 35px;
+      left: 13%;
+      background: var(--yellow);
+    }
+
+    .sprinkle.two {
+      top: 90px;
+      right: 15%;
+      background: var(--mint);
+      transform: rotate(-35deg);
+    }
+
+    .sprinkle.three {
+      bottom: 40px;
+      left: 20%;
+      background: var(--purple);
+      transform: rotate(65deg);
+    }
+
+    .sprinkle.four {
+      right: 22%;
+      bottom: 70px;
+      background: var(--pink);
+      transform: rotate(-65deg);
+    }
+
+    .candy {
+      position: absolute;
+      width: 72px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: inset 0 -7px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .candy::before,
+    .candy::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      width: 28px;
+      height: 34px;
+      background: inherit;
+      clip-path: polygon(100% 50%, 0 0, 0 100%);
+    }
+
+    .candy::before {
+      left: -24px;
+      transform: rotate(180deg);
+    }
+
+    .candy::after {
+      right: -24px;
+    }
+
+    .candy-left {
+      top: 135px;
+      left: 7%;
+      background: var(--yellow);
+      transform: rotate(-18deg);
+    }
+
+    .candy-right {
+      top: 145px;
+      right: 7%;
+      background: var(--mint);
+      transform: rotate(18deg);
+    }
+
+    .heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      color: #ed7181;
+      font-size: clamp(150px, 30vw, 260px);
+      line-height: 1;
+      transform: translate(-50%, -50%);
+      text-shadow:
+        5px 5px 0 #b64f62,
+        0 14px 0 rgba(128, 97, 158, 0.16);
+      animation: heartBeat 1.8s ease-in-out infinite;
     }
 
     .timer-panel {
@@ -174,9 +271,24 @@
       background: #d9c4f1;
     }
 
+    @keyframes heartBeat {
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      50% {
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
     @media (max-width: 560px) {
       body {
         padding: 14px;
+      }
+
+      .sweet-scene {
+        height: 285px;
       }
 
       .timer-panel {
@@ -199,6 +311,10 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .heart {
+        animation: none;
+      }
+
       button {
         transition: none;
       }
@@ -211,8 +327,20 @@
     <h1>Таймер для графини</h1>
 
     <p class="subtitle">
-      Ты лучшая и самая замечательная! У тебя всё получится!
+      Нежный таймер для важных дел, сладостей и хорошего настроения
     </p>
+
+    <section class="sweet-scene" aria-label="Сердечко среди конфет">
+      <span class="sprinkle one"></span>
+      <span class="sprinkle two"></span>
+      <span class="sprinkle three"></span>
+      <span class="sprinkle four"></span>
+
+      <div class="candy candy-left"></div>
+      <div class="candy candy-right"></div>
+
+      <div class="heart" aria-label="Сердечко">♥</div>
+    </section>
 
     <section class="timer-panel">
       <div id="time" class="time">10:00</div>
@@ -306,18 +434,15 @@
       const context = getAudioContext();
       const now = context.currentTime;
 
-      // Си - Ля - Си - Ми - До# - Си - До# - Фа# - Ре - До#
       const melody = [
-        { note: 493.88, start: 0.00, duration: 0.35 },
-        { note: 440.00, start: 0.35, duration: 0.35 },
-        { note: 493.88, start: 0.70, duration: 0.35 },
-        { note: 659.25, start: 1.05, duration: 0.45 },
-        { note: 554.37, start: 1.50, duration: 0.35 },
-        { note: 493.88, start: 1.85, duration: 0.35 },
-        { note: 554.37, start: 2.20, duration: 0.35 },
-        { note: 369.99, start: 2.55, duration: 0.45 },
-        { note: 587.33, start: 3.00, duration: 0.35 },
-        { note: 554.37, start: 3.35, duration: 0.75 }
+        { note: 523.25, start: 0.00, duration: 0.35 },
+        { note: 659.25, start: 0.35, duration: 0.35 },
+        { note: 783.99, start: 0.70, duration: 0.45 },
+        { note: 659.25, start: 1.15, duration: 0.35 },
+        { note: 880.00, start: 1.50, duration: 0.55 },
+        { note: 783.99, start: 2.05, duration: 0.35 },
+        { note: 659.25, start: 2.40, duration: 0.35 },
+        { note: 523.25, start: 2.75, duration: 0.75 }
       ];
 
       melody.forEach(function (sound) {
@@ -436,8 +561,7 @@
 
     testSoundButton.addEventListener("click", function () {
       playSound();
-      statusElement.textContent =
-        "Мелодия проверена";
+      statusElement.textContent = "Мелодия проверена";
     });
 
     minutesInput.addEventListener("keydown", function (event) {
